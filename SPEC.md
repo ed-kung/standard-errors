@@ -50,12 +50,25 @@ In the iteration state, the controls are locked. At the bottom of the control pa
 
 1. "Run regression for another sample"
     - Does another simulation (drawing X from uniform distribution from -1 to 1, then simulating Y according to the model.) Adds the new estimated coefficnet to the histogram, and adds the scatter chart to the "Last 4 Samples" panel.
+
 2. "Repeat for 1000 samples"
-    - Does the simulation for randomly generated samples. Adds all the coefficients from the simulation to the histogram. Adds the last 4 samples to the "Last 4 Samples" panel. 
+    - Does the simulation for randomly generated samples. Adds all the coefficients from the simulation to the histogram. Adds the last 4 samples to the "Last 4 Samples" panel. Changes state to Completed.
+
 3. "Reset"
     - Resets the app state back to "Initialization". Clears the histogram and Last 4 Samples panel.
 	
 ## Completed
+
+In the completed state, the controls are unlocked. At the bottom of the control panel, there is only the Reset button.
+
+
+# Tech Stack / Deployment
+
+The simulations should be done client side, in the browser. The idea is to deploy the app via github pages.
+
+Preference for using python with numpy / matplotlib, with pyscript, to do the simulations.
+
+Separate files used for simulation from files used for creating the UI.  I am more likely to directly edit the simulation files than any UI related files, because I have little experience in frontend web design.
 
 
 
