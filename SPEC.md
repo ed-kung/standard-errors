@@ -70,18 +70,3 @@ Preference for using python with numpy / matplotlib, with pyscript, to do the si
 
 Separate files used for simulation from files used for creating the UI.  I am more likely to directly edit the simulation files than any UI related files, because I have little experience in frontend web design.
 
-
-
-
-
-
-
-
-
- 
-
-
-
-
-# UI
-Title of page: 
