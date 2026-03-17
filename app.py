@@ -80,7 +80,12 @@ class App:
         el.innerHTML = ""
         if self.estimates:
             fig, ax = plt.subplots(figsize=(4, 3.5))
-            ax.hist(self.estimates, bins=30, color="steelblue", edgecolor="white", alpha=0.8)
+            bin_edges = np.linspace(-2, 2, 81)  # 80 bins, width 0.05
+            counts, _ = np.histogram(self.estimates, bins=bin_edges)
+            ax.bar(bin_edges[:-1], counts, width=0.05, align="edge",
+                   color="steelblue", edgecolor="white", alpha=0.8)
+            # Invisible points at edges to anchor the axis range
+            ax.plot([-2, 2], [0, 0], alpha=0)
             ax.set_xlabel("β̂ estimate", fontsize=10)
             ax.set_ylabel("Count", fontsize=10)
             ax.tick_params(labelsize=8)
