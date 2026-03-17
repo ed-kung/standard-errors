@@ -92,18 +92,33 @@ class App:
             fig.tight_layout()
             display(fig, target=target)
             plt.close(fig)
-        n = len(self.estimates)
+        num = len(self.estimates)
         count_el = document.getElementById("estimate-count")
         mean_el = document.getElementById("estimate-mean")
         std_el = document.getElementById("estimate-std")
-        if n > 0:
-            count_el.innerText = f"{n} estimate{'s' if n != 1 else ''} from {n} different sample{'s' if n != 1 else ''}"
-            mean_el.innerText = f"Mean = {np.mean(self.estimates):.4f}"
-            std_el.innerText = f"Standard Deviation = {np.std(self.estimates):.4f}"
+        ci_el = document.getElementById("estimate-ci")
+        formula_el = document.getElementById("estimate-formula")
+        if num > 0:
+            beta, sigma, n = self._get_params()
+            arr = np.array(self.estimates)
+            count_el.innerText = f"{num} estimate{'s' if num != 1 else ''} from {num} different sample{'s' if num != 1 else ''}"
+            mean_el.innerText = f"Mean = {np.mean(arr):.4f}"
+            std_el.innerText = f"Standard Deviation = {np.std(arr):.4f}"
+            if self.state == State.COMPLETED:
+                p25 = np.percentile(arr, 2.5)
+                p975 = np.percentile(arr, 97.5)
+                ci_el.innerText = f"95% interval = [{p25:.4f}, {p975:.4f}]"
+                se = sigma / np.sqrt(n / 3)
+                formula_el.innerText = f"Formula SE = σ / √(n · Var(X)) = {se:.4f}"
+            else:
+                ci_el.innerText = ""
+                formula_el.innerText = ""
         else:
             count_el.innerText = ""
             mean_el.innerText = ""
             std_el.innerText = ""
+            ci_el.innerText = ""
+            formula_el.innerText = ""
 
     def _update_ui(self):
         self._lock_controls(self.state == State.ITERATION)
