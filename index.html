@@ -55,8 +55,55 @@
             align-items: center;
             font-size: 0.95em;
             margin-bottom: 4px;
-            cursor: help;
         }
+        .label-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .help-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid #aaa;
+            font-size: 11px;
+            color: #888;
+            cursor: help;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .help-icon:hover { color: #555; border-color: #777; }
+        .help-icon .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            font-size: 12px;
+            font-weight: normal;
+            padding: 6px 10px;
+            border-radius: 4px;
+            white-space: normal;
+            width: 200px;
+            line-height: 1.4;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .help-icon .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
+        .help-icon:hover .tooltip { display: block; }
         .control-group input[type="range"] {
             width: 100%;
         }
@@ -131,24 +178,33 @@
             <p class="model-note">The true model is Y = X&beta; + &epsilon;, where &epsilon; has mean zero and standard deviation &sigma;.</p>
 
             <div class="control-group">
-                <label title="&beta; is the effect of X on Y, i.e. the slope of the estimated line.">
-                    <span>&beta;</span>
+                <label>
+                    <span class="label-left">
+                        <span>&beta;</span>
+                        <span class="help-icon">?<span class="tooltip">&beta; is the effect of X on Y, i.e. the slope of the estimated line.</span></span>
+                    </span>
                     <span class="slider-value" id="beta-value">0.50</span>
                 </label>
                 <input type="range" id="beta-slider" min="-1" max="1" step="0.01" value="0.5">
             </div>
 
             <div class="control-group">
-                <label title="&sigma; is how much noise there is in the data, i.e. how tightly clustered are the points around the trend line?">
-                    <span>&sigma;</span>
+                <label>
+                    <span class="label-left">
+                        <span>&sigma;</span>
+                        <span class="help-icon">?<span class="tooltip">&sigma; is how much noise there is in the data, i.e. how tightly clustered are the points around the trend line.</span></span>
+                    </span>
                     <span class="slider-value" id="sigma-value">0.50</span>
                 </label>
                 <input type="range" id="sigma-slider" min="0" max="1" step="0.01" value="0.5">
             </div>
 
             <div class="control-group">
-                <label title="How many observations are in each sample?">
-                    <span>Sample size</span>
+                <label>
+                    <span class="label-left">
+                        <span>Sample size</span>
+                        <span class="help-icon">?<span class="tooltip">How many observations are in each sample?</span></span>
+                    </span>
                     <span class="slider-value" id="n-value">50</span>
                 </label>
                 <input type="range" id="n-slider" min="10" max="200" step="1" value="50">
