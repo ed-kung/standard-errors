@@ -156,6 +156,8 @@ class App:
 
 # --- Initialize app ---
 app = App()
+document.getElementById("loading").style.display = "none"
+document.getElementById("app-content").style.display = "block"
 
 
 # --- Button handlers ---
