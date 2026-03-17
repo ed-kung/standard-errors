@@ -89,7 +89,16 @@ class App:
             plt.close(fig)
         n = len(self.estimates)
         count_el = document.getElementById("estimate-count")
-        count_el.innerText = f"{n} estimate{'s' if n != 1 else ''} from {n} different sample{'s' if n != 1 else ''}" if n > 0 else ""
+        mean_el = document.getElementById("estimate-mean")
+        std_el = document.getElementById("estimate-std")
+        if n > 0:
+            count_el.innerText = f"{n} estimate{'s' if n != 1 else ''} from {n} different sample{'s' if n != 1 else ''}"
+            mean_el.innerText = f"Mean = {np.mean(self.estimates):.4f}"
+            std_el.innerText = f"Standard Deviation = {np.std(self.estimates):.4f}"
+        else:
+            count_el.innerText = ""
+            mean_el.innerText = ""
+            std_el.innerText = ""
 
     def _update_ui(self):
         self._lock_controls(self.state == State.ITERATION)

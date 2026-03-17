@@ -84,9 +84,8 @@
 
         /* Scatter grid */
         .scatter-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 8px;
         }
         .scatter-cell {
@@ -98,11 +97,19 @@
             font-size: 0.85em;
         }
 
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Histogram */
         #histogram-container {
             min-height: 300px;
         }
-        #estimate-count {
+        #estimate-count,
+        #estimate-mean,
+        #estimate-std {
             font-size: 0.9em;
             color: #555;
             margin-top: 8px;
@@ -171,6 +178,8 @@
             <h2>Histogram of Estimates</h2>
             <div id="histogram-container"></div>
             <div id="estimate-count"></div>
+            <div id="estimate-mean"></div>
+            <div id="estimate-std"></div>
         </div>
     </div>
 
