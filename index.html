@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Standard Errors</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background: #fafafa;
+        }
+        h1 { margin-bottom: 16px; }
+        .intro { max-width: 800px; margin-bottom: 24px; line-height: 1.6; }
+        .intro p { margin-bottom: 12px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 16px;
+        }
+        .panel h2 {
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        /* Controls panel */
+        .model-note {
+            font-size: 0.9em;
+            margin-bottom: 16px;
+            line-height: 1.5;
+            color: #555;
+        }
+        .control-group {
+            margin-bottom: 14px;
+        }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95em;
+            margin-bottom: 4px;
+            cursor: help;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+        .slider-value {
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .buttons button {
+            padding: 8px 12px;
+            border: 1px solid #999;
+            border-radius: 4px;
+            background: #f5f5f5;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .buttons button:hover { background: #e8e8e8; }
+
+        /* Scatter grid */
+        .scatter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 8px;
+        }
+        .scatter-cell {
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 0.85em;
+        }
+
+        /* Histogram */
+        #histogram-container {
+            min-height: 300px;
+        }
+        #estimate-count {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Understanding Standard Errors</h1>
+    <div class="intro">
+        <p>When we run a regression to estimate coefficients, each estimate is accompanied by a standard error. You can think of the standard error as how much uncertainty we have about that estimate. One way of looking at it is: if we were to re-do the regression thousands of times&mdash;each time using a different random sample of the underlying population&mdash;what would the standard deviation of all the different estimates be?</p>
+        <p>The standard error depends mostly on two things: how large is our sample size, and how tightly correlated are the X and Y variables? Generally speaking, larger sample sizes lead to lower standard errors, and noisier data leads to higher standard errors.</p>
+    </div>
+
+    <div class="grid">
+        <!-- Controls Panel -->
+        <div class="panel">
+            <h2>Controls</h2>
+            <p class="model-note">The true model is Y = X&beta; + &epsilon;, where &epsilon; has mean zero and standard deviation &sigma;.</p>
+
+            <div class="control-group">
+                <label title="&beta; is the effect of X on Y, i.e. the slope of the estimated line.">
+                    <span>&beta;</span>
+                    <span class="slider-value" id="beta-value">0.50</span>
+                </label>
+                <input type="range" id="beta-slider" min="-1" max="1" step="0.01" value="0.5">
+            </div>
+
+            <div class="control-group">
+                <label title="&sigma; is how much noise there is in the data, i.e. how tightly clustered are the points around the trend line?">
+                    <span>&sigma;</span>
+                    <span class="slider-value" id="sigma-value">0.50</span>
+                </label>
+                <input type="range" id="sigma-slider" min="0" max="1" step="0.01" value="0.5">
+            </div>
+
+            <div class="control-group">
+                <label title="How many observations are in each sample?">
+                    <span>Sample size</span>
+                    <span class="slider-value" id="n-value">50</span>
+                </label>
+                <input type="range" id="n-slider" min="10" max="200" step="1" value="50">
+            </div>
+
+            <div class="buttons">
+                <button id="btn-run-one" style="display:block;">Run regression for one sample</button>
+                <button id="btn-run-another" style="display:none;">Run regression for another sample</button>
+                <button id="btn-run-1000" style="display:none;">Repeat for 1000 samples</button>
+                <button id="btn-reset" style="display:none;">Reset</button>
+            </div>
+        </div>
+
+        <!-- Last 4 Samples Panel -->
+        <div class="panel">
+            <h2>Last 4 Samples</h2>
+            <div class="scatter-grid">
+                <div class="scatter-cell" id="scatter-0"></div>
+                <div class="scatter-cell" id="scatter-1"></div>
+                <div class="scatter-cell" id="scatter-2"></div>
+                <div class="scatter-cell" id="scatter-3"></div>
+            </div>
+        </div>
+
+        <!-- Histogram Panel -->
+        <div class="panel">
+            <h2>Histogram of Estimates</h2>
+            <div id="histogram-container"></div>
+            <div id="estimate-count"></div>
+        </div>
+    </div>
+
+    <script type="py" src="./app.py" config="./pyscript.toml"></script>
+</body>
+</html>
