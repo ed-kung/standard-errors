@@ -68,7 +68,7 @@ class App:
                 ax.plot(x_line, y_line, color="red", linewidth=1.5)
                 ax.set_xlim(-1, 1)
                 ax.set_ylim(-3, 3)
-                ax.set_title(f"β̂ = {sample['beta_hat']:.3f}", fontsize=10)
+                ax.set_title(f"Estimated β = {sample['beta_hat']:.3f}", fontsize=10)
                 ax.tick_params(labelsize=7)
                 fig.tight_layout()
                 display(fig, target=target)
