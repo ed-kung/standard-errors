@@ -109,7 +109,7 @@ class App:
                 p975 = np.percentile(arr, 97.5)
                 ci_el.innerText = f"95% interval = [{p25:.4f}, {p975:.4f}]"
                 se = sigma / np.sqrt(n / 3)
-                formula_el.innerText = f"Formula SE = σ / √(n · Var(X)) = {se:.4f}"
+                formula_el.innerHTML = f'Formula SE = σ / √(n · Var(X)) = {se:.4f} <span class="help-icon">?<span class="tooltip">The theoretical standard error based on underlying model parameters.</span></span>'
             else:
                 ci_el.innerText = ""
                 formula_el.innerText = ""
